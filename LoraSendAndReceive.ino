@@ -1,15 +1,22 @@
+//Transmitter
+//Woon Jun Shen
+//NodeMCU + XL1276 (LORA Spreading High Sensitivity XL1276-D01 SX1278 Wireless Transceiver Module 433MHz from aliexpress)
+//https://sites.google.com/site/fypprojectscepter/home
+
 #include "SX1278.h"
 #include <SPI.h>
 
 #define LORA_MODE  4
 #define LORA_CHANNEL  CH_6_BW_125
-#define LORA_ADDRESS  4
+#define LORA_ADDRESS  2
 
-#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
+#define LORA_SEND_TO_ADDRESS  4
 
 
 int e;
-char my_packet[100];
+
+char message1 [] = "Packet 1, wanting to see if received packet is the same as sent packet";
+char message2 [] = "Packet 2, broadcast test";
 
 void setup()
 {
@@ -17,7 +24,7 @@ void setup()
   Serial.begin(115200);
 
   // Print a start message
-  Serial.println(F("sx1278 module and Arduino: receiving packets"));
+  Serial.println(F("sx1278 module and Arduino: send two packets (One to an addrees and another one in broadcast)"));
 
   // Power ON the module
   if (sx1278.ON() == 0) {
@@ -26,7 +33,7 @@ void setup()
     Serial.println(F("Setting power ON: ERROR "));
   }
 
-  // Set transmission mode and print the result
+  // Set transmission mode and print the result 
   if (sx1278.setMode(LORA_MODE) == 0) {
     Serial.println(F("Setting Mode: SUCCESS "));
   } else {
@@ -75,19 +82,23 @@ void setup()
 
 void loop(void)
 {
-  // Receive message for 10 seconds
-  e = sx1278.receivePacketTimeout(10000);
-  if (e == 0) {
-      
-    Serial.println(F("Package received!"));
+  // // Send message1 and print the result
+  // e = sx1278.sendPacketTimeout(LORA_SEND_TO_ADDRESS, message1);
+  // Serial.print(F("Packet sent, state "));
+  // Serial.println(e, DEC);
 
-    for (unsigned int i = 0; i < sx1278.packet_received.length; i++) {
-      my_packet[i] = (char)sx1278.packet_received.data[i];
-    }
-    
-    Serial.print(F("Message: "));
-    Serial.println(my_packet);
-  } else {
-    Serial.print(F("Package received ERROR\n"));
-  }
+  // if (e == 0) {
+  // }
+
+  // delay(4000);  
+
+  // // Send message2 broadcast and print the result
+  // e = sx1278.sendPacketTimeout(0, message2);
+  // Serial.print(F("Packet sent, state "));
+  // Serial.println(e, DEC);
+
+  // if (e == 0) {
+  // }
+
+  delay(4000);  
 }
